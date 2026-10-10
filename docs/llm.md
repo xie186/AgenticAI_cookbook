@@ -26,3 +26,21 @@ Why this matters for bioinformatics. Each of these generic capabilities has a di
 
 The knowledge-cutoff limitation is especially relevant here: biological databases update constantly, so a bioinformatics agent cannot rely on the LLM's internal memory for current sequence records, annotations, or literature. Instead, the LLM acts as the reasoning and language layer, while live retrieval tools supply the up-to-date biological data it reasons over.
 
+
+
+## Retrieval-Augmented Generation (RAG)
+
+In the previous section, we saw that an LLM's knowledge is frozen at the moment training ends. RAG — Retrieval-Augmented Generation — is the most widely used technique for working around that limitation. Rather than relying solely on what the model learned during training, RAG connects the LLM to an external knowledge base, commonly a vector database, that can be searched at the moment a query is made. The model's response is then generated using both the prompt and the relevant information retrieved from that external source.
+
+
+### Why RAG matters
+
+Overcoming outdated knowledge. Because an LLM's knowledge cutoff means it has no awareness of anything after its training period, RAG lets the model draw on current, continuously updated information — without the cost and delay of retraining the model itself.
+
+Accessing private data. Most proprietary or domain-specific material — internal research papers, lab notebooks, unpublished datasets — was never part of a base model's training data. RAG allows the model to reason over exactly this kind of private or specialized content, retrieving it on demand rather than requiring it to have been "known" in advance.
+
+Reducing hallucinations. When an LLM is asked something it doesn't actually know, it can generate a plausible-sounding but incorrect answer — a hallucination. By grounding the model's response in retrieved passages from verified sources, RAG substantially lowers the likelihood of this kind of fabrication, since the model is working from real supporting text rather than relying purely on internal pattern completion.
+
+### Why this matters for bioinformatics
+
+RAG is especially well suited to bioinformatics applications, where the underlying data changes constantly and much of the most relevant material is domain-specific or private. An agent built with RAG can, for example, retrieve the latest entries from UniProt or PubMed before answering a question about a protein, pull facts from a lab's internal sequencing reports, or ground its answer in a specific paper a researcher has uploaded — rather than relying on what the base model happened to have seen during training, which may be outdated, incomplete, or entirely absent for a niche organism or pathway.
