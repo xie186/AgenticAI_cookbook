@@ -1,0 +1,57 @@
+name: mkdocs
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - "mkdocs.yml"
+      - "docs/**"
+      - ".github/workflows/ci_mkdoc.yaml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: mkdocs-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Configure Git credentials
+        run: |
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.x"
+
+      - name: Set weekly cache key
+        run: echo "cache_id=$(date --utc '+%V')" >> "$GITHUB_ENV"
+
+      - uses: actions/cache@v4
+        with:
+          key: m6a-mkdocs-${{ runner.os }}-${{ hashFiles('docs/requirements.txt') }}-${{ env.cache_id }}
+          path: .cache
+          restore-keys: |
+            m6a-mkdocs-${{ runner.os }}-
+            mkdocs-material-
+
+      - name: Install documentation dependencies
+        run: |
+          python -m pip install --upgrade pip
+          python -m pip install -r docs/requirements.txt
+
+      - name: Validate documentation
+        run: mkdocs build --strict
+
+      - name: Deploy to GitHub Pages
+        run: mkdocs gh-deploy --force --remote-branch gh-pages
