@@ -51,7 +51,7 @@ markdown_extensions:
 nav:
   - Overview: index.md
   - Core Foundations:
-      - LLM:  LLM.md
+      - LLM:  llm.md
       - Evolution from standard LLMs to AI agents: llm2agent.md
       - Essential components: agent_essential.md
   - Orchestration with LangChain & LangGraph:
